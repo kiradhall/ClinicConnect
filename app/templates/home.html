@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block main %}
+<div class="clinc d-flex align-items-center justify-content-center">
+  <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo" class="img-fluid me-4 rounded-circle border" style="max-width: 250px; border-width: 2px !important; border-color: #ffffff !important;">
+  <div class="text-center">
+    <h1 class="h-4">ClinicConnect</h1>
+    <p class="h-4">Your one-stop solution for managing appointments with ease and security.</p>
+  </div>
+</div>
+<div class="p-5 mb-4 bg-light rounded-3 border text-center mt-5">
+    
+  <div class="container-fluid py-5">
+    <h1 class="display-4">Welcome to Your Appointment Manager</h1>
+    <p class="lead">Great to see you here. Manage your appointments quickly and securely.</p>
+    <a href="{{ url_for('manage_appointments') }}" class="btn btn-primary btn-lg">Manage Appointments</a>
+  </div>
+</div>
+{% endblock %}

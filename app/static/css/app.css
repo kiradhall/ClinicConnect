@@ -1,0 +1,52 @@
+@import url('https://fonts.googleapis.com/css2?family=Alfa+Slab+One&family=Google+Sans+Flex:opsz,wght@6..144,1..1000&family=Sora:wght@100..800&display=swap');
+
+body {
+    font-family:system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    padding-top: 5rem;
+    background-color: aliceblue;
+}
+
+h1.h-4 {
+    font-family: 'sora', sans-serif;
+    color: #a8d0ff;
+    text-shadow: 2px 2px 8px #312e2e;
+    font-size: 100px;
+    text-align: center;
+    padding-left: 40px;
+}
+
+p.h-4 {
+    font-family: 'sora', sans-serif;
+    color: #a8d0ff;
+    text-shadow: 1px 1px 5px #312e2e;
+    font-size: 20px;
+    text-align: center;
+    padding-left: 40px;
+}
+
+img {
+    width: 500px;
+    
+}
+
+header .navbar {
+    background-color: #182647 !important;
+}
+
+header .navbar .nav-link,
+header .navbar .navbar-brand {
+    color: #ffffff !important;
+    font-family: 'sora', sans-serif;
+}
+
+header .navbar .nav-link:hover{
+    color: #a8d0ff !important;
+}
+
+div.clinc {
+    background-color: #182647;
+    padding: 2rem;
+    border-radius: 0.5rem;
+    text-align: center;
+    margin-bottom: 2rem;
+}

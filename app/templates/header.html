@@ -1,0 +1,38 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary fixed-top">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="{{ url_for('home') }}">
+      <i class="bi bi-plus-circle" style="font-size: 1.5rem;"></i>
+    </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+  
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav me-auto">
+        <li class="nav-item">
+          <a class="nav-link active" href="{{ url_for('home') }}">Home</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{{ url_for('manage_appointments') }}">Manage Appointments</a>
+        </li>
+      </ul>
+      <ul class="navbar-nav ms-auto">
+        {% if current_user.is_authenticated %}
+          <li class="nav-item">
+            <a class="nav-link" href="#">Hello, {{ current_user.username }}</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('logout') }}">Logout</a>
+          </li>
+        {% else %}
+          <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('login') }}">Login</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('register') }}">Register</a>
+          </li>
+        {% endif %}
+      </ul>
+    </div>
+  </div>
+</nav>

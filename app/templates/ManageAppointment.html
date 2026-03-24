@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block css %}{% endblock %}
+
+{% block main %}
+<div class="p-5 mb-4 bg-light rounded-3 border">
+  <div class="container-fluid py-5">
+    <h1 class="display-5 fw-bold">Upcoming Appointments</h1>
+    <p>Click below to go to the book appointment page and schedule a new meeting.</p>
+    <a class="btn btn-primary" href="{{ url_for('book_appointment') }}">Book Appointment</a>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-lg-12 mb-4">
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">Upcoming Appointments</h5>
+        {% if appointments %}
+          <div class="table-responsive">
+            <table class="table table-striped align-middle">
+              <thead>
+                <tr>
+                  <th scope="col">When</th>
+                  <th scope="col">Title</th>
+                  <th scope="col">Notes</th>
+                  <th scope="col" class="text-end">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for appointment in appointments %}
+                  <tr>
+                    <td>{{ appointment.when.strftime('%Y-%m-%d %H:%M') }}</td>
+                    <td>{{ appointment.title }}</td>
+                    <td>{{ appointment.notes or '-' }}</td>
+                    <td class="text-end">
+                      <form method="post" action="{{ url_for('cancel_appointment', appointment_id=appointment.id) }}" class="d-inline">
+                        <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Cancel this appointment?');">Cancel</button>
+                      </form>
+                    </td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        {% else %}
+          <p class="mb-0">No upcoming appointments. Click Book Appointment to add one.</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block js %}{% endblock %}
