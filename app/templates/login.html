@@ -2,12 +2,11 @@
 
 {% block main %}
 <form class="form-login m-auto" method="post">
-  {{ form.csrf_token }}
   <input type="hidden" name="next" value="{{ request.args.get('next') or '' }}">
   <h2>Please sign in</h2>
   <div class="form-floating">
-    {{ form.username(class='form-control', placeholder="Enter your username") }}
-    {{ form.username.label() }}
+    {{ form.username(class='form-control', placeholder="Username or Email") }}
+    <label for="username">Username or Email</label>
   </div>
   <div class="form-floating">
     {{ form.password(class='form-control', placeholder="Enter your password") }}

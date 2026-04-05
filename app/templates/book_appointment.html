@@ -3,33 +3,97 @@
 {% block main %}
 <div class="p-5 mb-4 bg-light rounded-3 border">
   <div class="container-fluid py-5">
-    <h1 class="display-5 fw-bold">Book a New Appointment</h1>
-    <p>Enter a title, date/time, and optional notes below.</p>
+    <h1 class="display-5 fw-bold">Book Appointment</h1>
+    <p>Select a date, choose an available time slot, and confirm your booking.</p>
   </div>
 </div>
 
 <div class="row justify-content-center">
-  <div class="col-lg-6">
-    <div class="card">
+  <div class="col-lg-8">
+    <div class="card shadow-sm">
       <div class="card-body">
         <form method="post" action="{{ url_for('book_appointment') }}">
+
           <div class="mb-3">
-            <label for="title" class="form-label">Title</label>
-            <input type="text" class="form-control" id="title" name="title" placeholder="What is this appointment about?" required>
+            <label for="appointment_date" class="form-label">Select Date</label>
+            <input
+              type="date"
+              class="form-control"
+              id="appointment_date"
+              name="appointment_date"
+              min="{{ today_date }}"
+              value="{{ selected_date }}"
+              required
+            >
           </div>
+
           <div class="mb-3">
-            <label for="when" class="form-label">Date &amp; Time</label>
-            <input type="datetime-local" class="form-control" id="when" name="when" required>
+            <label for="time_slot" class="form-label">Available Time Slots</label>
+            {% if not selected_date %}
+              <div class="text-muted small mb-1">Please select a date first.</div>
+              <select class="form-select" id="time_slot" name="time_slot" disabled>
+                <option value="">-- Select a date above --</option>
+              </select>
+            {% elif not available_slots %}
+              <select class="form-select" id="time_slot" name="time_slot" disabled>
+                <option value="">-- No available slots --</option>
+              </select>
+              <small class="text-danger">No available time slots for this date.</small>
+            {% else %}
+              <select class="form-select" id="time_slot" name="time_slot" required>
+                <option value="">-- Select a Time Slot --</option>
+                {% for slot in available_slots %}
+                  <option value="{{ slot }}">{{ slot }}</option>
+                {% endfor %}
+              </select>
+            {% endif %}
           </div>
+
           <div class="mb-3">
-            <label for="notes" class="form-label">Notes (optional)</label>
-            <textarea class="form-control" id="notes" name="notes" rows="3"></textarea>
+            <label class="form-label">Patient Name</label>
+            {% if is_patient %}
+              <input type="text" class="form-control" value="{{ patient_name }}" readonly>
+            {% else %}
+              <input type="text" class="form-control" id="patient_name" name="patient_name" placeholder="Enter patient name" value="{{ patient_name }}" required>
+            {% endif %}
           </div>
-          <button type="submit" class="btn btn-primary">Submit</button>
-          <a class="btn btn-link" href="{{ url_for('manage_appointments') }}">Back to Manage Appointments</a>
+
+          <div class="mb-3">
+            <label class="form-label">Patient Email</label>
+            {% if is_patient %}
+              <input type="email" class="form-control" value="{{ patient_email }}" readonly>
+            {% else %}
+              <input type="email" class="form-control" id="patient_email" name="patient_email" placeholder="Enter patient email" value="{{ patient_email }}" required>
+            {% endif %}
+          </div>
+
+          <div class="mb-3">
+            <label for="reason" class="form-label">Reason for Visit</label>
+            <textarea class="form-control" id="reason" name="reason" rows="3" placeholder="Enter the reason for your visit" required></textarea>
+          </div>
+
+          <div class="mb-3">
+            <label for="notes" class="form-label">Additional Notes (Optional)</label>
+            <textarea class="form-control" id="notes" name="notes" rows="2"></textarea>
+          </div>
+
+          <div class="d-flex gap-2">
+            <button type="submit" class="btn btn-primary">Confirm Booking</button>
+            <a class="btn btn-outline-secondary" href="{{ url_for('my_appointments') }}">Back</a>
+          </div>
+
         </form>
       </div>
     </div>
   </div>
 </div>
+{% endblock %}
+
+{% block js %}
+<script>
+  document.getElementById('appointment_date').addEventListener('change', function () {
+    const selectedDate = this.value;
+    window.location.href = "{{ url_for('book_appointment') }}?appointment_date=" + encodeURIComponent(selectedDate);
+  });
+</script>
 {% endblock %}

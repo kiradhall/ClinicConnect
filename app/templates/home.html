@@ -11,9 +11,24 @@
 <div class="p-5 mb-4 bg-light rounded-3 border text-center mt-5">
     
   <div class="container-fluid py-5">
+    {% if current_user.is_authenticated and current_user.role == 'patient' %}
     <h1 class="display-4">Welcome to Your Appointment Manager</h1>
     <p class="lead">Great to see you here. Manage your appointments quickly and securely.</p>
+    <a href="{{ url_for('my_appointments') }}" class="btn btn-primary btn-lg">My Appointments</a>
+    {% elif current_user.is_authenticated and current_user.role == 'receptionist' %}
+    <h1 class="display-4">Welcome to the Receptionist Dashboard</h1>
+    <p class="lead">Manage patient appointments efficiently and securely.</p>
     <a href="{{ url_for('manage_appointments') }}" class="btn btn-primary btn-lg">Manage Appointments</a>
+    {% elif current_user.is_authenticated and current_user.role == 'admin' %}
+    <h1 class="display-4">Welcome to the Admin Dashboard</h1>
+    <p class="lead">Manage the entire system efficiently and securely.</p>
+    <a href="{{ url_for('admin_users') }}" class="btn btn-primary btn-lg">Admin Panel</a>
+    {% elif not current_user.is_authenticated %}
+    <h1 class="display-4">Welcome to ClinicConnect</h1>
+    <p class="lead">Great to see you here. Please login or create an account to continue.</p>
+    <a href="{{ url_for('login') }}" class="btn btn-primary btn-lg">Login</a>
+    <a href="{{ url_for('register') }}" class="btn btn-secondary btn-lg">Create Account</a>
+    {% endif %}
   </div>
 </div>
 {% endblock %}

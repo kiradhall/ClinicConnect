@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+
+{% block main %}
+<div class="p-5 mb-4 bg-light rounded-3 border">
+  <div class="container-fluid py-5">
+    <h1 class="display-5 fw-bold">Manage Clinic Hours</h1>
+    <p>Set the weekly working hours. Changes apply immediately to the booking engine.</p>
+  </div>
+</div>
+
+<form method="post" action="{{ url_for('clinic_hours') }}">
+  <div class="card shadow-sm">
+    <div class="card-body">
+      <div class="table-responsive">
+        <table class="table align-middle">
+          <thead>
+            <tr>
+              <th style="width:130px">Day</th>
+              <th>Status</th>
+              <th>Opening Time</th>
+              <th>Closing Time</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for ch in hours %}
+            <tr id="row-{{ ch.day_of_week }}">
+              <td class="fw-semibold">{{ ch.day_name }}</td>
+              <td>
+                <div class="form-check form-switch">
+                  <input class="form-check-input day-toggle"
+                         type="checkbox"
+                         id="toggle-{{ ch.day_of_week }}"
+                         name="is_open_{{ ch.day_of_week }}"
+                         value="1"
+                         data-day="{{ ch.day_of_week }}"
+                         {% if ch.is_open %}checked{% endif %}>
+                  <label class="form-check-label" for="toggle-{{ ch.day_of_week }}">
+                    {% if ch.is_open %}Open{% else %}Closed{% endif %}
+                  </label>
+                </div>
+              </td>
+              <td>
+                <input type="time"
+                       class="form-control time-input"
+                       id="open-{{ ch.day_of_week }}"
+                       name="open_{{ ch.day_of_week }}"
+                       value="{{ ch.open_time or '' }}"
+                       {% if not ch.is_open %}disabled{% endif %}
+                       style="max-width:140px">
+              </td>
+              <td>
+                <input type="time"
+                       class="form-control time-input"
+                       id="close-{{ ch.day_of_week }}"
+                       name="close_{{ ch.day_of_week }}"
+                       value="{{ ch.close_time or '' }}"
+                       {% if not ch.is_open %}disabled{% endif %}
+                       style="max-width:140px">
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      <button type="submit" class="btn btn-primary mt-2">
+        <i class="bi bi-save me-1"></i> Save Schedule
+      </button>
+    </div>
+  </div>
+</form>
+{% endblock %}
+
+{% block js %}
+<script>
+  document.querySelectorAll('.day-toggle').forEach(function (toggle) {
+    toggle.addEventListener('change', function () {
+      const day = this.dataset.day;
+      const openInput  = document.getElementById('open-'  + day);
+      const closeInput = document.getElementById('close-' + day);
+      const label = this.nextElementSibling;
+
+      if (this.checked) {
+        openInput.disabled  = false;
+        closeInput.disabled = false;
+        label.textContent   = 'Open';
+      } else {
+        openInput.disabled  = true;
+        closeInput.disabled = true;
+        label.textContent   = 'Closed';
+      }
+    });
+  });
+</script>
+{% endblock %}

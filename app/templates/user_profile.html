@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}">
+</head>
+<body>
+    {% extends "base.html" %}
+
+    {% block main %}
+    <div class="profile-card">
+        <div class="profile-header">
+      {% if current_user.profile_pic %}
+        <img src="{{ url_for('static', filename='uploads/' + current_user.profile_pic) }}" alt="Profile Picture" class="profile-avatar">
+      {% else %}
+        <img src="{{ url_for('static', filename='images/profile.png') }}" alt="Profile Picture" class="profile-avatar">
+      {% endif %}
+    </div>
+    <div class="profile-main">
+      <h2>{{ current_user.first_name }} {{ current_user.last_name }}</h2>
+      <div class="username">@{{ current_user.username }}</div>
+      <div class="info">
+        <p><strong>Email:</strong> {{ current_user.email }}</p>
+        {% if current_user.phone %}<p><strong>Phone:</strong> {{ current_user.phone }}</p>{% endif %}
+        <p><strong>{{ current_user.role.capitalize() }}</strong></p>
+      </div>
+      <a href="{{ url_for('edit_profile') }}" class="profile-btn mt-3 d-inline-block text-decoration-none">Edit Profile</a>
+    </div>
+  </div>
+    {% endblock %}
+</body>
+</html>

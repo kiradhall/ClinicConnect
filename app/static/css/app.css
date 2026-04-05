@@ -50,3 +50,92 @@ div.clinc {
     text-align: center;
     margin-bottom: 2rem;
 }
+
+/* Profile Page Styles */
+.profile-card {
+  max-width: 420px;
+  margin: 2.5rem auto;
+  background: #fff;
+  border-radius: 1.2rem;
+  box-shadow: 0 4px 24px 0 rgba(24,38,71,0.10);
+  overflow: hidden;
+  padding: 0;
+}
+.profile-header {
+  background: linear-gradient(180deg, #182647 0%, #273d70 100%);
+  padding: 2.5rem 1rem 3.5rem 1rem;
+  text-align: center;
+  position: relative;
+}
+.profile-avatar {
+  width: 110px;
+  height: 110px;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 5px solid #fff;
+  background: #e9f3ff;
+  position: absolute;
+  left: 50%;
+  bottom: -55px;
+  transform: translateX(-50%);
+  box-shadow: 0 2px 8px rgba(24,38,71,0.10);
+}
+.profile-main {
+  padding: 4.5rem 2rem 2rem 2rem;
+  text-align: center;
+}
+.profile-main h2 {
+  font-family: 'Sora', sans-serif;
+  font-weight: 700;
+  margin-bottom: 0.2rem;
+  font-size: 2.1rem;
+  color: #222;
+}
+.profile-main .username {
+  color: #182647;
+  font-size: 1.1rem;
+  margin-bottom: 0.7rem;
+  font-family: 'Sora', sans-serif;
+}
+.profile-main .info {
+  color: #666;
+  font-size: 1.05rem;
+  margin-bottom: 1.2rem;
+}
+.profile-main .bio {
+  background: #f6f8f6;
+  border-radius: 0.5rem;
+  padding: 1.1rem 1rem 0.7rem 1rem;
+  margin-bottom: 1.2rem;
+  font-size: 1.04rem;
+  color: #444;
+}
+.profile-main .profile-stats {
+  display: flex;
+  justify-content: space-around;
+  margin-bottom: 1.2rem;
+  color: #222;
+}
+.profile-main .profile-stats div {
+  text-align: center;
+}
+.profile-main .profile-stats .stat-label {
+  font-size: 0.95rem;
+  color: #888;
+}
+.profile-main .profile-btn {
+  margin-top: 1.2rem;
+  padding: 0.7rem 2.5rem;
+  background: #182647;
+  color: #fff;
+  border: none;
+  border-radius: 0.4rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(76,175,80,0.10);
+  transition: background 0.2s;
+}
+.profile-main .profile-btn:hover {
+  background: #388e3c;
+}
+

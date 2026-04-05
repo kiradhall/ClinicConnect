@@ -12,24 +12,35 @@
         <li class="nav-item">
           <a class="nav-link active" href="{{ url_for('home') }}">Home</a>
         </li>
+        {% if current_user.is_authenticated and current_user.role == 'patient' %}
         <li class="nav-item">
-          <a class="nav-link" href="{{ url_for('manage_appointments') }}">Manage Appointments</a>
+          <a class="nav-link" href="{{ url_for('my_appointments') }}">My Appointments</a>
         </li>
+        {% endif %}
+        {% if current_user.is_authenticated and current_user.role in ('receptionist') %}
+          <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('manage_appointments') }}">Appointment Dashboard</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('patient_list') }}">Patients</a>
+          </li>
+        {% endif %}
+        {% if current_user.is_authenticated and current_user.role == 'admin' %}
+          <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('admin_users') }}">User Management</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('clinic_hours') }}">Clinic Hours</a>
+          </li>
+        {% endif %}
       </ul>
       <ul class="navbar-nav ms-auto">
         {% if current_user.is_authenticated %}
           <li class="nav-item">
-            <a class="nav-link" href="#">Hello, {{ current_user.username }}</a>
+            <a class="nav-link" href="{{ url_for('user_profile') }}">Hello, {{ current_user.username }}</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="{{ url_for('logout') }}">Logout</a>
-          </li>
-        {% else %}
-          <li class="nav-item">
-            <a class="nav-link" href="{{ url_for('login') }}">Login</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="{{ url_for('register') }}">Register</a>
+            <a class="nav-link" href="{{ url_for('logout') }}" onclick="return confirm('Are you sure you want to log out?')">Logout</a>
           </li>
         {% endif %}
       </ul>

@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+
+{% block css %}
+<style>
+  th a { color: inherit; text-decoration: none; }
+  th a:hover { text-decoration: underline; }
+</style>
+{% endblock %}
+
+{% block main %}
+<div class="p-5 mb-4 bg-light rounded-3 border">
+  <div class="container-fluid py-5">
+    <h1 class="display-5 fw-bold">User Management</h1>
+    <p>Change the role of any registered user. You cannot change your own role.</p>
+  </div>
+</div>
+
+{% macro sort_link(col, label) %}
+  {% if sort == col %}
+    {% set next_dir = 'asc' if direction == 'desc' else 'desc' %}
+    <a href="{{ url_for('admin_users', sort=col, direction=next_dir, search=search) }}">
+      {{ label }}
+      <i class="bi bi-arrow-{{ 'up' if direction == 'asc' else 'down' }}-short"></i>
+    </a>
+  {% else %}
+    <a href="{{ url_for('admin_users', sort=col, direction='asc', search=search) }}">{{ label }}</a>
+  {% endif %}
+{% endmacro %}
+
+<!-- Search -->
+<form method="get" action="{{ url_for('admin_users') }}" class="row g-3 mb-4">
+  <div class="col-md-5">
+    <input type="text" class="form-control" name="search"
+           placeholder="Search username, name or email…" value="{{ search }}">
+  </div>
+  <input type="hidden" name="sort" value="{{ sort }}">
+  <input type="hidden" name="direction" value="{{ direction }}">
+  <div class="col-auto">
+    <button type="submit" class="btn btn-outline-primary">Search</button>
+    <a href="{{ url_for('admin_users') }}" class="btn btn-outline-secondary ms-1">Reset</a>
+  </div>
+</form>
+
+<div class="card shadow-sm">
+  <div class="card-body">
+    <div class="table-responsive">
+      <table class="table table-striped align-middle">
+        <thead>
+          <tr>
+            <th>{{ sort_link('username', 'Username') }}</th>
+            <th>{{ sort_link('first_name', 'Name') }}</th>
+            <th>{{ sort_link('role', 'Current Role') }}</th>
+            <th class="text-end">Change Role</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for user in users %}
+            <tr>
+              <td>{{ user.username }}</td>
+              <td>{{ user.first_name }} {{ user.last_name }}</td>
+              <td>
+                <span class="badge
+                  {% if user.role == 'admin' %}bg-danger
+                  {% elif user.role == 'receptionist' %}bg-warning text-dark
+                  {% else %}bg-primary{% endif %}">
+                  {{ user.role | capitalize }}
+                </span>
+              </td>
+              <td class="text-end">
+                {% if user.id == current_user.id %}
+                  <span class="text-muted small">Cannot change own role</span>
+                {% else %}
+                  <form method="post" action="{{ url_for('admin_change_role', user_id=user.id) }}" class="d-flex gap-2 justify-content-end">
+                    <select name="role" class="form-select form-select-sm" style="width: auto;">
+                      <option value="patient"       {% if user.role == 'patient' %}selected{% endif %}>Patient</option>
+                      <option value="receptionist"  {% if user.role == 'receptionist' %}selected{% endif %}>Receptionist</option>
+                      <option value="admin"         {% if user.role == 'admin' %}selected{% endif %}>Admin</option>
+                    </select>
+                    <button type="submit" class="btn btn-sm btn-primary">Save</button>
+                  </form>
+                {% endif %}
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

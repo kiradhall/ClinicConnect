@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+
+{% block css %}
+<style>
+  th a { color: inherit; text-decoration: none; }
+  th a:hover { text-decoration: underline; }
+</style>
+{% endblock %}
+
+{% block main %}
+<div class="p-5 mb-4 bg-light rounded-3 border">
+  <div class="container-fluid py-5">
+    <h1 class="display-5 fw-bold">Appointment Dashboard</h1>
+    <p>View, filter, and manage all clinic appointments.</p>
+    <a class="btn btn-primary" href="{{ url_for('book_appointment') }}">Book Appointment</a>
+  </div>
+</div>
+
+<!-- Filters -->
+<form method="get" action="{{ url_for('manage_appointments') }}" class="row g-3 mb-4">
+  <div class="col-md-4">
+    <input type="text" class="form-control" name="search" placeholder="Search name, email or reason…"
+           value="{{ search }}">
+  </div>
+  <div class="col-md-3">
+    <select name="status" class="form-select">
+      <option value="">All Statuses</option>
+      <option value="booked"    {% if status_filter == 'booked'    %}selected{% endif %}>Booked</option>
+      <option value="cancelled" {% if status_filter == 'cancelled' %}selected{% endif %}>Cancelled</option>
+      <option value="no-show"   {% if status_filter == 'no-show'   %}selected{% endif %}>No-Show</option>
+    </select>
+  </div>
+  <input type="hidden" name="sort" value="{{ sort }}">
+  <input type="hidden" name="direction" value="{{ direction }}">
+  <div class="col-auto">
+    <button type="submit" class="btn btn-outline-primary">Filter</button>
+    <a href="{{ url_for('manage_appointments') }}" class="btn btn-outline-secondary ms-1">Reset</a>
+  </div>
+</form>
+
+{% macro sort_link(col, label) %}
+  {% if sort == col %}
+    {% set next_dir = 'asc' if direction == 'desc' else 'desc' %}
+    <a href="{{ url_for('manage_appointments', sort=col, direction=next_dir, status=status_filter, search=search) }}">
+      {{ label }}
+      <i class="bi bi-arrow-{{ 'up' if direction == 'asc' else 'down' }}-short"></i>
+    </a>
+  {% else %}
+    <a href="{{ url_for('manage_appointments', sort=col, direction='asc', status=status_filter, search=search) }}">{{ label }}</a>
+  {% endif %}
+{% endmacro %}
+
+<div class="card shadow-sm">
+  <div class="card-body">
+    {% if appointments %}
+      <div class="table-responsive">
+        <table class="table table-striped align-middle">
+          <thead>
+            <tr>
+              <th>{{ sort_link('when',          'Date & Time') }}</th>
+              <th>{{ sort_link('patient_name',  'Patient Name') }}</th>
+              <th>{{ sort_link('patient_email', 'Email') }}</th>
+              <th>{{ sort_link('reason',        'Reason') }}</th>
+              <th>Notes</th>
+              <th>{{ sort_link('status',        'Status') }}</th>
+              <th class="text-end">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for appt in appointments %}
+              <tr class="{% if appt.status == 'cancelled' %}table-secondary{% elif appt.status == 'no-show' %}table-warning{% endif %}">
+                <td>{{ appt.when.strftime('%Y-%m-%d %I:%M %p') }}</td>
+                <td>{{ appt.patient_name }}</td>
+                <td>{{ appt.patient_email }}</td>
+                <td>{{ appt.reason }}</td>
+                <td>{{ appt.notes or '-' }}</td>
+                <td>
+                  <span class="badge
+                    {% if appt.status == 'booked' %}bg-success
+                    {% elif appt.status == 'cancelled' %}bg-secondary
+                    {% else %}bg-warning text-dark{% endif %}">
+                    {{ appt.status | capitalize }}
+                  </span>
+                </td>
+                <td class="text-end">
+                  {% if appt.status == 'booked' %}
+                    <a href="{{ url_for('reschedule_appointment', appointment_id=appt.id) }}"
+                       class="btn btn-sm btn-outline-primary me-1">Reschedule</a>
+                    <form method="post"
+                          action="{{ url_for('mark_no_show', appointment_id=appt.id) }}"
+                          class="d-inline">
+                      {% set no_show_ready = now >= appt.when + timedelta(minutes=10) %}
+                      <button type="submit" class="btn btn-sm btn-outline-warning me-1"
+                              {% if not no_show_ready %}disabled title="Available 10 min after appointment time"{% endif %}>
+                        No-Show
+                      </button>
+                    </form>
+                    <form method="post"
+                          action="{{ url_for('dashboard_cancel', appointment_id=appt.id) }}"
+                          class="d-inline">
+                      <button type="submit" class="btn btn-sm btn-outline-danger"
+                              onclick="return confirm('Cancel this appointment?');">Cancel</button>
+                    </form>
+                  {% else %}
+                    <span class="text-muted small">No actions</span>
+                  {% endif %}
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      <p class="text-muted small mt-2">{{ appointments | length }} appointment(s) shown.</p>
+    {% else %}
+      <p class="mb-0">No appointments match your filters.</p>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

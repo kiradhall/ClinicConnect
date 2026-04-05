@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+
+{% block main %}
+<div class="p-5 mb-4 bg-light rounded-3 border">
+  <div class="container-fluid py-5">
+    <h1 class="display-5 fw-bold">Reschedule Appointment</h1>
+    <p>Choose a new date and available time slot to move your existing appointment.</p>
+  </div>
+</div>
+
+<div class="row justify-content-center">
+  <div class="col-lg-8">
+
+    <div class="card shadow-sm mb-4">
+      <div class="card-header bg-secondary text-white">Current Appointment Details</div>
+      <div class="card-body">
+        <dl class="row mb-0">
+          <dt class="col-sm-4">Patient Name</dt>
+          <dd class="col-sm-8">{{ appointment.patient_name }}</dd>
+          <dt class="col-sm-4">Patient Email</dt>
+          <dd class="col-sm-8">{{ appointment.patient_email }}</dd>
+          <dt class="col-sm-4">Current Date &amp; Time</dt>
+          <dd class="col-sm-8">{{ appointment.when.strftime('%Y-%m-%d %I:%M %p') }}</dd>
+          <dt class="col-sm-4">Reason</dt>
+          <dd class="col-sm-8">{{ appointment.reason }}</dd>
+        </dl>
+      </div>
+    </div>
+
+    <div class="card shadow-sm">
+      <div class="card-header bg-primary text-white">Select New Date &amp; Time</div>
+      <div class="card-body">
+        <form method="post" action="{{ url_for('reschedule_appointment', appointment_id=appointment.id) }}">
+
+          <div class="mb-3">
+            <label for="appointment_date" class="form-label">New Date</label>
+            <input
+              type="date"
+              class="form-control"
+              id="appointment_date"
+              name="appointment_date"
+              min="{{ today_date }}"
+              value="{{ selected_date }}"
+              required
+            >
+          </div>
+
+          <div class="mb-3">
+            <label for="time_slot" class="form-label">Available Time Slots</label>
+            <select class="form-select" id="time_slot" name="time_slot" required>
+              <option value="">-- Select a Time Slot --</option>
+              {% for slot in available_slots %}
+                <option value="{{ slot }}">{{ slot }}</option>
+              {% endfor %}
+            </select>
+            {% if selected_date and not available_slots %}
+              <small class="text-danger">No available time slots for this date. Please choose another date.</small>
+            {% endif %}
+          </div>
+
+          <div class="d-flex gap-2">
+            <button
+              type="submit"
+              class="btn btn-primary"
+              {% if selected_date and not available_slots %}disabled{% endif %}
+            >Confirm Reschedule</button>
+            <a class="btn btn-outline-secondary" href="{{ url_for('manage_appointments') }}">Back</a>
+          </div>
+
+        </form>
+      </div>
+    </div>
+
+  </div>
+</div>
+{% endblock %}
+
+{% block js %}
+<script>
+  document.getElementById('appointment_date').addEventListener('change', function () {
+    const selectedDate = this.value;
+    window.location.href = "{{ url_for('reschedule_appointment', appointment_id=appointment.id) }}?appointment_date=" + encodeURIComponent(selectedDate);
+  });
+</script>
+{% endblock %}

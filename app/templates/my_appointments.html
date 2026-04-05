@@ -1,0 +1,130 @@
+{% extends "base.html" %}
+
+{% block css %}{% endblock %}
+
+{% block main %}
+<div class="p-5 mb-4 bg-light rounded-3 border">
+  <div class="container-fluid py-5">
+    <h1 class="display-5 fw-bold">My Appointments</h1>
+    <p>View your upcoming and past appointments.</p>
+    <a class="btn btn-primary" href="{{ url_for('book_appointment') }}">Book Appointment</a>
+  </div>
+</div>
+
+<!-- Upcoming -->
+<h4 class="mb-3">Upcoming Appointments</h4>
+<div class="row mb-5">
+  <div class="col-lg-12">
+    <div class="card">
+      <div class="card-body">
+        {% if upcoming %}
+          <div class="table-responsive">
+            <table class="table table-striped align-middle">
+              <thead>
+                <tr>
+                  <th>When</th>
+                  {% if current_user.role != 'patient' %}
+                    <th>Patient Name</th>
+                    <th>Patient Email</th>
+                  {% endif %}
+                  <th>Reason for Visit</th>
+                  <th>Notes</th>
+                  <th>Status</th>
+                  <th class="text-end">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for appointment in upcoming %}
+                  <tr>
+                    <td>{{ appointment.when.strftime('%Y-%m-%d %I:%M %p') }}</td>
+                    {% if current_user.role != 'patient' %}
+                      <td>{{ appointment.patient_name or '-' }}</td>
+                      <td>{{ appointment.patient_email or '-' }}</td>
+                    {% endif %}
+                    <td>{{ appointment.reason or '-' }}</td>
+                    <td>{{ appointment.notes or '-' }}</td>
+                    <td>
+                      <span class="badge
+                        {% if appointment.status == 'booked' %}bg-success
+                        {% elif appointment.status == 'cancelled' %}bg-secondary
+                        {% else %}bg-warning text-dark{% endif %}">
+                        {{ appointment.status | capitalize }}
+                      </span>
+                    </td>
+                    <td class="text-end">
+                      <a href="{{ url_for('reschedule_appointment', appointment_id=appointment.id) }}"
+                         class="btn btn-sm btn-outline-primary me-1">Reschedule</a>
+                      <form method="post"
+                            action="{{ url_for('cancel_appointment', appointment_id=appointment.id) }}"
+                            class="d-inline">
+                        <button type="submit" class="btn btn-sm btn-outline-danger"
+                                onclick="return confirm('Cancel this appointment?');">Cancel</button>
+                      </form>
+                    </td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        {% else %}
+          <p class="mb-0">No upcoming appointments. Click "Book Appointment" to add one.</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Past -->
+<h4 class="mb-3">Past Appointments</h4>
+<div class="row">
+  <div class="col-lg-12">
+    <div class="card">
+      <div class="card-body">
+        {% if past %}
+          <div class="table-responsive">
+            <table class="table table-striped align-middle text-muted">
+              <thead>
+                <tr>
+                  <th>When</th>
+                  {% if current_user.role != 'patient' %}
+                    <th>Patient Name</th>
+                    <th>Patient Email</th>
+                  {% endif %}
+                  <th>Reason for Visit</th>
+                  <th>Notes</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for appointment in past %}
+                  <tr>
+                    <td>{{ appointment.when.strftime('%Y-%m-%d %I:%M %p') }}</td>
+                    {% if current_user.role != 'patient' %}
+                      <td>{{ appointment.patient_name or '-' }}</td>
+                      <td>{{ appointment.patient_email or '-' }}</td>
+                    {% endif %}
+                    <td>{{ appointment.reason or '-' }}</td>
+                    <td>{{ appointment.notes or '-' }}</td>
+                    <td>
+                      <span class="badge
+                        {% if appointment.status == 'booked' %}bg-success
+                        {% elif appointment.status == 'cancelled' %}bg-secondary
+                        {% else %}bg-warning text-dark{% endif %}">
+                        {{ appointment.status | capitalize }}
+                      </span>
+                    </td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        {% else %}
+          <p class="mb-0">No past appointments on record.</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block js %}{% endblock %}

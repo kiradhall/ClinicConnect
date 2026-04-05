@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+
+{% block css %}
+<style>
+  th a { color: inherit; text-decoration: none; }
+  th a:hover { text-decoration: underline; }
+</style>
+{% endblock %}
+
+{% block main %}
+<div class="p-5 mb-4 bg-light rounded-3 border">
+  <div class="container-fluid py-5">
+    <h1 class="display-5 fw-bold">Patient List</h1>
+    <p>View and update patient contact details.</p>
+  </div>
+</div>
+
+<!-- Search -->
+<form method="get" action="{{ url_for('patient_list') }}" class="row g-3 mb-4">
+  <div class="col-md-5">
+    <input type="text" class="form-control" name="search"
+           placeholder="Search name, username or email…" value="{{ search }}">
+  </div>
+  <div class="col-auto">
+    <button type="submit" class="btn btn-outline-primary">Search</button>
+    <a href="{{ url_for('patient_list') }}" class="btn btn-outline-secondary ms-1">Reset</a>
+  </div>
+</form>
+
+<div class="card shadow-sm">
+  <div class="card-body">
+    {% if patients %}
+      <div class="table-responsive">
+        <table class="table table-striped align-middle">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Username</th>
+              <th>Email</th>
+              <th>Phone</th>
+              <th class="text-end">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for patient in patients %}
+              <tr>
+                <td>{{ patient.first_name }} {{ patient.last_name }}</td>
+                <td>{{ patient.username }}</td>
+                <td>{{ patient.email }}</td>
+                <td>{{ patient.phone or '—' }}</td>
+                <td class="text-end">
+                  <button class="btn btn-sm btn-outline-primary"
+                          data-bs-toggle="modal"
+                          data-bs-target="#editModal{{ patient.id }}">
+                    Edit
+                  </button>
+                </td>
+              </tr>
+
+              <!-- Edit Modal -->
+              <div class="modal fade" id="editModal{{ patient.id }}" tabindex="-1"
+                   aria-labelledby="editModalLabel{{ patient.id }}" aria-hidden="true">
+                <div class="modal-dialog">
+                  <div class="modal-content">
+                    <form method="post" action="{{ url_for('edit_patient', patient_id=patient.id) }}">
+                      <div class="modal-header">
+                        <h5 class="modal-title" id="editModalLabel{{ patient.id }}">
+                          Edit — {{ patient.first_name }} {{ patient.last_name }}
+                        </h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                      </div>
+                      <div class="modal-body">
+                        <div class="mb-3">
+                          <label class="form-label">Email</label>
+                          <input type="email" class="form-control" name="email"
+                                 value="{{ patient.email }}" required>
+                        </div>
+                        <div class="mb-3">
+                          <label class="form-label">Phone Number</label>
+                          <input type="text" class="form-control" name="phone"
+                                 value="{{ patient.phone or '' }}" placeholder="e.g. +18681234567">
+                        </div>
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Save Changes</button>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      <p class="text-muted small mt-2">{{ patients | length }} patient(s) shown.</p>
+    {% else %}
+      <p class="mb-0">No patients found.</p>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}
